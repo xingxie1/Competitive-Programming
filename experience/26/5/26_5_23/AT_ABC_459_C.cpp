@@ -1,0 +1,79 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+using vt = vector<int>;
+using vd = vector<double>;
+using vll = vector<long long>;
+using vvt = vector<vector<int>>;
+using vvd = vector<vector<double>>;
+using vvll = vector<vector<long long>>;
+using pii = pair<int,int>;
+using pll = pair<ll,ll>;
+using vpii = vector<pair<int,int>>;
+using vpll = vector<pair<ll,ll>>;
+using vvpii = vector<vector<pair<int,int>>>;
+using vvpll = vector<vector<pair<ll,ll>>>;
+#define YES cout << "Yes" << endl
+#define NO cout << "No" << endl
+#define fi first
+#define se second
+#define umap unordered_map
+#define uset unordered_set
+#define pqueue priority_queue
+#define mset multiset
+#define endl '\n'
+    // cout << fixed << setprecision(10);
+//const int MOD = 998244353;
+//const int MOD = (int)1e9+7;
+
+void solve()
+{
+    int n, q;
+    cin >> n >> q;
+    vt a(n);
+    int cnt = 0;
+    mset<int> st;
+    while (q--) 
+    {
+        int op;
+        cin >> op;
+        if (op == 1) 
+        {
+            int x;
+            cin >> x;
+            x--;
+            if (st.contains(a[x])) st.erase(st.find(a[x]));
+            if (a[x] == 0) cnt++;
+            a[x] ++;
+            st.insert(a[x]);
+            if (cnt == n)
+            {
+                for (int j = 0;j < n;j++) 
+                {
+                    if (st.contains(a[j])) st.erase(st.find(a[j]));
+                    a[j]--;
+                    if (a[j] == 0) cnt--;
+                    st.insert(a[j]);
+                }
+            }
+        }
+        else 
+        {
+            int y;
+            cin >> y;
+            cout << st.end() - st.lower_bound(y);
+        }
+    }
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int _ = 1;
+    // cin >> _;
+    while (_ --) solve();
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+using vt = vector<int>;
+using vvt = vector<vector<int>>;
+using vll = vector<long long>;
+using vvll = vector<vector<long long>>;
+using pii = pair<int,int>;
+using pll = pair<ll,ll>;
+using vpii = vector<pair<int,int>>;
+using vpll = vector<pair<ll,ll>>;
+#define fi first
+#define se second
+#define umap unordered_map
+#define pqueue priority_queue
+#define mset multiset
+#define endl '\n'
+//cout << fixed << setprecision(10);
+const int mod = 998244353;
+const int MOD = (int)1e9+7;
+
+void solve()
+{
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int N = 1 << n;
+    int c0 = 0,c1 = 0;
+    for (char c : s)
+    {
+        c0 += c == '0';
+        c1 += c == '1';
+    }
+    int mn = 1 << c1;
+    int mx = N - (1 << c0) + 1;
+    for (int i = mn;i <= mx;i++) cout << i << " ";
+    cout << endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int _ = 1;
+    // cin >> _;
+    while (_ --) solve();
+
+    return 0;
+}

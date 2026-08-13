@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+using namespace std;
+using vt = vector<int>;
+using vll = vector<long long>;
+
+void solve()
+{
+    int n,m;
+    cin >> n >> m;
+    vt a(n);
+    for (int i = 0;i < n;i++) cin >> a[i];
+    int x = a[8];
+    sort(a.begin(),a.end(),greater<int>());
+    if (x >= 0.8 * m )
+    {
+        cout << "Yes";
+    }
+    else if (a[0] == x || a[1] == x || a[2] == x)
+    {
+        cout << "Yes";
+    }
+    else cout << "No";
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int _ = 1;
+    // cin >> _;
+    while (_ --) solve();
+
+    return 0;
+}
