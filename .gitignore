@@ -1,7 +1,10 @@
 .vscode/
+.cph/
 
 *.exe
 *.o
 *.out
+*.in
 
-.cph/
+compiled/
+io/
