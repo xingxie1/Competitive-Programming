@@ -8,3 +8,6 @@
 
 compiled/
 io/
+
+pch.hpp
+pch.hpp.gch
