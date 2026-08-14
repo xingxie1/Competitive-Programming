@@ -47,7 +47,10 @@ double rand_real(double a, double b)
 
 void solve()
 {
-    ll x = rng(),a = rng(),b = rng();
+    ll x = rng() % (1000000000) + 1, a = rng() % (10000) + 1, b = rng() % (1000000) + 1;
+    if (x < 0) x = -x;
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
     auto f1 = [&]()
     {
         ll l = 0, r = INT_MAX / 2;
@@ -152,17 +155,17 @@ void solve()
                     res -= (i128)m * sa - (i128)(m * (m - 1)) / 2;
                 }
                 res -= (i128)m * b;
-                if (res <= 0)
-                    r = m;
-                else
-                    l = m;
+                if (res <= 0) r = m;
+                else l = m;
             }
             ans = min(ans, i + r);
         }
         return ans;
     };
     ll ans1 = f1();
+    // ll ans1 = 0;
     ll ans2 = f2();
+    // ll ans2 = 0;
     if (ans1 != ans2)
     {
         cout << x << " " << a << " " << b << endl;

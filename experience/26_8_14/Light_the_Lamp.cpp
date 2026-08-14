@@ -37,41 +37,47 @@ using vtrl = vector<tuple<ll,ll,ll>>;
 //const int MOD = 998244353;
 //const int MOD = (int)1e9+7;
 
+struct node
+{
+    int x1,y1,x2,y2,len,type;
+    bool operator < (const node other) const
+    {
+        return x1 < other.x1;
+    }
+};
 void solve()
 {
     int n;
     cin >> n;
-    mset<int> o,e;
-    for (int i = 0;i < n;i++) 
+    vector<node> a(n);
+    for (int i = 0;i < n;i++)
     {
-        int x;
-        cin >> x;
-        if (x % 2) o.insert(x);
-        else e.insert(x);
+        int y;
+        cin >> y;
+        a[i].x1 = i + 1;
+        a[i].y1 = y;
+        a[i].x2 = i + 1;
+        a[i].y2 = y;
+        a[i].len = 1;
+        a[i].type = -1;
     }
-    int ans = 0;
-    if (o.size() % 2 == 0 && o.size())
+    sort(a.begin(),a.end());
+    vt b;
+    vector<node> na;
+    for (int i = 0;i < n;i++)
     {
-        int mxo = *(--o.end());
-        int mxe = 0;
-        if (e.size()) mxe = *(--e.end());
-        int mx = max(mxo - 1,mxe);
-        ans = mx / 2;
+        int j = i;
+        if (i + 1 < n && a[i + 1].y1 - a[i].y1 == 1)
+        {
+            while (j + 1 < n && a[j + 1].y1 - a[j].y1 == 1)
+            {
+                j++;
+            }
+
+        }
     }
-    else if (o.size() % 2)
-    {
-        int mxo = *(--o.end());
-        int mxe = 0;
-        if (e.size()) mxe = *(--e.end());
-        if (mxo < mxe - 1) mxo = mxe - 1;
-        ans = (mxo + 1) / 2;
-    }
-    else 
-    {
-        int mx = *(--e.end());
-        ans = mx / 2;
-    }
-    cout << ans << endl;
+
+
 }
 
 int main()
