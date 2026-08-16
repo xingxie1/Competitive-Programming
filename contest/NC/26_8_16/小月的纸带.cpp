@@ -40,7 +40,7 @@ using vtrl = vector<tuple<ll,ll,ll>>;
 class segtree
 {
     int n;
-    vt pre,suf,cnta,cntb,cntc;
+    vt pre,suf,cnta,cntb,cntc,lazy;
     void up(int p)
     {
         pre[p] = pre[p << 1];
@@ -71,19 +71,40 @@ class segtree
         build(p << 1 | 1,m + 1,ed,s);
         up(p);
     }
+    void apply(int p) 
+    {
+        pre[p] = (pre[p] + 1) % 3;
+        suf[p] = (suf[p] + 1) % 3;
+        int tmp = cntc[p];
+        cntc[p] = cntb[p];
+        cntb[p] = cnta[p];
+        cnta[p] = tmp; 
+    }
+    void down(int p)
+    {
+        int t = lazy[p];
+        lazy[p] = 0;
+        while (t--)
+        {
+            apply(p << 1);
+            apply(p << 1 | 1);
+            lazy[p << 1]++;
+            lazy[p << 1] %= 3;
+            lazy[p << 1 | 1]++;
+            lazy[p << 1 | 1] %= 3;
+        }
+    }
     void update(int p,int st,int ed,int l,int r)
     {
         if (l <= st && r >= ed)
         {
-            pre[p] = (pre[p] + 1) % 3;
-            suf[p] = (suf[p] + 1) % 3;
-            int tmp = cntc[p];
-            cntc[p] = cntb[p];
-            cntb[p] = cnta[p];
-            cnta[p] = tmp; 
+            apply(p);
+            lazy[p] ++;
+            lazy[p] %= 3;
             return ;
         }
         int m = st + ed >> 1;
+        down(p);
         if (l <= m) update(p << 1,st,m,l,r);
         if (r > m) update(p << 1 | 1,m + 1,ed,l,r);
         up(p);
@@ -98,6 +119,7 @@ public:
         cnta.assign(n << 2,0);
         cntb.assign(n << 2,0);
         cntc.assign(n << 2,0);
+        lazy.assign(n << 2,0);
         build(1,0,n - 1,s);
     }
     int query() 
