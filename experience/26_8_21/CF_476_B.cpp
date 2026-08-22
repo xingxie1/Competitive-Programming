@@ -1,0 +1,91 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef unsigned long long ull;
+using i128 = __int128_t;
+using vt = vector<int>;
+using vd = vector<double>;
+using vll = vector<long long>;
+using vvt = vector<vector<int>>;
+using vvd = vector<vector<double>>;
+using vvll = vector<vector<long long>>;
+using vvvt = vector<vector<vector<int>>>;
+using vvvll = vector<vector<vector<long long>>>;
+using pii = pair<int,int>;
+using pll = pair<ll,ll>;
+using pdd = pair<double,double>;
+using vpii = vector<pair<int,int>>;
+using vpll = vector<pair<ll,ll>>;
+using vpdd = vector<pair<double,double>>;
+using vvpii = vector<vector<pair<int,int>>>;
+using vvpll = vector<vector<pair<ll,ll>>>;
+using tri = tuple<int,int,int>;
+using trl = tuple<ll,ll,ll>;
+using vtri = vector<tuple<int,int,int>>;
+using vtrl = vector<tuple<ll,ll,ll>>;
+#define YES cout << "YES" << endl
+#define Yes cout << "Yes" << endl
+#define NO cout << "NO" << endl
+#define No cout << "No" << endl
+#define fi first
+#define se second
+#define umap unordered_map
+#define uset unordered_set
+#define pqueue priority_queue
+#define mset multiset
+#define endl '\n'
+//const int MOD = 998244353;
+//const int MOD = (int)1e9+7;
+
+
+// 从 n 个数中选 m 个数的方案数
+ll comb(int n, int m) 
+{
+    ll ans = 1;
+    for (int i = n;i >= n - m + 1;i--) ans *= i;
+    for (int i = 1;i <= m;i++) ans /= i;
+    return ans;
+}
+
+void solve()
+{
+    string s,t;
+    cin >> s >> t;
+    vt cnt1(3),cnt2(3);
+    for (char c : s) 
+    {
+        if (c == '+') cnt1[0]++;
+        else if (c == '-') cnt1[1]++;
+    }
+    for (char c : t) 
+    {
+        if (c == '+') cnt2[0]++;
+        else if (c == '-') cnt2[1]++;
+        else cnt2[2]++;
+    }
+    if (cnt2[0] > cnt1[0] || cnt2[1] > cnt1[1]) 
+    {
+        cout << 0 << endl;
+        return ;
+    }
+    if (cnt2[2] == 0)
+    {
+        cout << 1 << endl;
+        return ;
+    }
+    double ans = comb(cnt2[2],cnt1[0] - cnt2[0]) / pow(2,cnt2[2]);
+    cout << ans << endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cout << fixed << setprecision(15);
+    int _ = 1;
+    // cin >> _;
+    while (_ --) solve();
+
+    return 0;
+}
