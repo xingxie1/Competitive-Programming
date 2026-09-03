@@ -39,56 +39,41 @@ using vtrl = vector<tuple<ll,ll,ll>>;
 
 void solve()
 {
-    int n,w,k;
-    cin >> n >> w >> k;
-    vpii a(n);
-    for (int i = 0;i < n;i++) cin >> a[i].fi >> a[i].se;
-    ranges::sort(a,{},[&](auto& b) {
-        return -b.fi;
-    });
-    if (k == 0)
+    int n,m;
+    cin >> n >> m;
+    vvt a(n,vt(n));
+    for (int i = 0;i < m;i++)
     {
-        vll dp(w + 1);
-        for (int i = 0;i < n;i++)
+        int x,y;
+        cin >> x >> y;
+        x--;y--;
+        a[x][y] = 1;
+        a[y][x] = 1;
+    }
+    vvll dp(1 << n,vll(n));
+    for (int i = 0;i < n;i++) dp[1 << i][i] = 1;
+    ll ans = 0;
+    for (int mask = 1;mask < 1 << n;mask++)
+    {
+        int s = 0;
+        while (!(mask >> s & 1)) s++;
+        for (int i = s;i < n;i++)
         {
-            for (int j = w;j >= a[i].fi;j--)
+            if (!(mask >> i & 1)) continue;
+            if (!dp[mask][i]) continue;
+            if (popcount(1u * mask) >= 3 && a[i][s])
             {
-                dp[j] = max(dp[j],dp[j - a[i].fi] + a[i].se);
+                ans += dp[mask][i];
+            }
+            for (int j = s + 1;j < n;j++)
+            {
+                if (mask >> j & 1) continue;
+                if (!a[i][j]) continue;
+                dp[mask | 1 << j][j] += dp[mask][i];
             }
         }
-        cout << dp[w] << endl;
-        return ;
     }
-    pqueue<int,vt,greater<>> pq;
-    vll pre(n,-1);
-    ll sum = 0;
-    for (int i = 0;i < n;i++)
-    {
-        if (pq.size() == k - 1) 
-        { 
-            pre[i] = sum;
-        }
-        pq.push(a[i].se);
-        sum += a[i].se;
-        if (pq.size() > k - 1)
-        {
-            sum -= pq.top();
-            pq.pop();
-        }
-    }
-    vll dp(w + 1);
-    ll ans = 0;
-    for (int i = n - 1;i >= 0;i--)
-    {
-        if (pre[i] != -1) 
-        {
-            ans = max(ans,pre[i] + a[i].se + dp[w]);
-        }
-        for (int j = w;j >= a[i].fi;j--)
-        {
-            dp[j] = max(dp[j],dp[j - a[i].fi] + a[i].se);
-        }
-    }
+    ans /= 2;
     cout << ans << endl;
 }
 
