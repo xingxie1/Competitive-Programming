@@ -37,88 +37,57 @@ using vtrl = vector<tuple<ll,ll,ll>>;
 //const int MOD = 998244353;
 //const int MOD = (int)1e9+7;
 
-const int MOD = 3;
-const int MX = 200001;
-ll F[MX]; // F[i] = i!
-ll INV_F[MX]; // INV_F[i] = i!^-1 = qpow(i!, MOD-2)
+// Lucas 定理
+// 求 C(n, k) % p
+// 要求：p 是质数，并且 p 不能太大（需要 O(p) 预处理）
 
-ll qpow(ll a, ll b) 
+ll P;
+vector<ll> F, INV_F;
+
+// 快速幂
+ll qpow(ll a, ll b)
 {
     ll res = 1;
     while (b)
     {
-        if (b & 1) res = res * a % MOD;
-        a = a * a % MOD;
+        if (b & 1) res = res * a % P;
+        a = a * a % P;
         b >>= 1;
     }
     return res;
 }
 
-auto init = []
+// 初始化阶乘和逆阶乘
+// Lucas 中只需要计算 C(a,b)，其中 0 <= a,b < P
+// 所以预处理到 P - 1 即可
+void init_lucas(ll p)
 {
+    P = p;
+
+    F.resize(P);
+    INV_F.resize(P);
+
     F[0] = 1;
-    for (int i = 1; i < MX; i++) 
-    {
-        F[i] = F[i - 1] * i % MOD;
-    }
+    for (ll i = 1; i < P; i++) F[i] = F[i - 1] * i % P;
 
-    INV_F[MX - 1] = qpow(F[MX - 1], MOD - 2);
-    for (int i = MX - 1; i; i--) 
-    {
-        INV_F[i - 1] = INV_F[i] * i % MOD;
-    }
-    return 0;
-}();
+    INV_F[P - 1] = qpow(F[P - 1], P - 2);
 
-auto init = [](ll p)
-{
-    F[0] = 1;
-    for (int i = 1; i < MX; i++) 
-    {
-        F[i] = F[i - 1] * i % MOD;
-    }
-
-    INV_F[MX - 1] = qpow(F[MX - 1], MOD - 2);
-    for (int i = MX - 1; i; i--) 
-    {
-        INV_F[i - 1] = INV_F[i] * i % MOD;
-    }
-    return 0;
-};
-
-// 从 n 个数中选 m 个数的方案数
-ll comb(int n, int m) 
-{
-    return m < 0 || m > n ? 0 : F[n] * INV_F[m] % MOD * INV_F[n - m] % MOD;
+    for (ll i = P - 1; i >= 1; i--) INV_F[i - 1] = INV_F[i] * i % P;
 }
 
-//卡特兰数
-ll Catalan(ll n)
+// C(n, k) % P
+// 这里要求 n < P
+ll C_lucas(ll n, ll k)
 {
-    return (comb(2 * n, n) - comb(2 * n, n - 1) + MOD) % MOD;
-}
-
-// 广义卡特兰数
-// 路径从 (0,0) 到 (m,n)
-// 始终满足 y <= x + k
-ll CatalanGeneral(ll n, ll m, ll k)
-{
-    if (n > m + k) return 0;
-
-    return (comb(n + m, n) - comb(n + m, n - k - 1) + MOD) % MOD;
+    if (k < 0 || k > n) return 0;
+    return F[n] * INV_F[k] % P * INV_F[n - k] % P;
 }
 
 // Lucas 定理
-ll C_lucas(ll n,ll  k)
-{
-    if (k < 0 || k > n) return 0;
-    return F[n] * INV_F[k] % MOD * INV_F[n - k] % MOD;
-}
 ll lucas(ll n, ll k)
 {
     if (k == 0) return 1;
-
-    return C_lucas(n % MOD, k % MOD) * lucas(n / MOD, k / MOD) % MOD;
+    return C_lucas(n % P, k % P) * lucas(n / P, k / P) % P;
 }
 
 void solve()
@@ -132,6 +101,7 @@ void solve()
     p['W'] = 1;
     p['R'] = 2;
     ll ans = 0;
+    init_lucas(3);
     for (int i = 0;i < n;i++)
     {
         char c = s[i];
