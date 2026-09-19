@@ -39,47 +39,54 @@ using vtrl = vector<tuple<ll,ll,ll>>;
 
 void solve()
 {
-    int n, q;
-    cin >> n >> q;
-    vt a(n + 1);
-    int B = sqrt(n);
-    for (int i = 1;i <= n;i++) cin >> a[i];
-    int cnt = (n + B - 1) / B;
-    vll sum(cnt),add(cnt);
-    auto bel = [&](int x) 
+    int n;
+    cin >> n;
+    vvt g(n);
+    for (int i = 1;i < n;i++)
     {
-        return (x - 1) / B;
-    };
-    for (int i = 1;i <= n;i++)
-    {
-        sum[bel(i)] += a[i];
+        int u,v;
+        cin >> u >> v;
+        u--;v--;
+        g[u].push_back(v);
+        g[v].push_back(u);
     }
-    while (q--)
+    vt sz(n);
+    auto dfs1 = [&](auto&& self,int u,int fa) -> void
     {
-        int op;
-        cin >> op;
-        if (op == 1)
+        sz[u] = 1;
+        for (int v : g[u])
         {
-
+            if (v == fa) continue;
+            self(self,v,u);
+            sz[u] += sz[v];
         }
+    };
+    dfs1(dfs1,0,-1);
+    vt dp(n);
+    auto dfs2 = [&](auto&& self,int u,int fa) -> void
+    {
+        int a = -1,b = -1;
+        for (int v : g[u])
+        {
+            if (v == fa) continue;
+            if (a == -1) a = v;
+            else b = v;
+        }
+        if (a == -1) return ;
+        if (b == -1) 
+        {
+            self(self,a,u);
+            dp[u] = sz[a] - 1;
+        } 
         else 
         {
-            int l,r;
-            cin >> l >> r;
-            int bl = bel(l);
-            int br = bel(r);
-            ll res = 0;
-            for (int i = bl + 1;i <= br - 1;i++) res += sum[i] + add[i];
-            for (int i = br * B + 1;i <= r;i++) 
-            {
-                res += a[i];
-            }
-            if (bl != br)
-            {
-                
-            }
+            self(self,a,u);
+            self(self,b,u);
+            dp[u] = max(dp[b] + sz[a] - 1,dp[a] + sz[b] - 1);
         }
-    }
+    };
+    dfs2(dfs2,0,-1);
+    cout << dp[0] << endl;
 }
 
 int main()
@@ -89,7 +96,7 @@ int main()
 
     cout << fixed << setprecision(15);
     int _ = 1;
-    // cin >> _;
+    cin >> _;
     while (_ --) solve();
 
     return 0;
