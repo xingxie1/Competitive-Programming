@@ -79,7 +79,7 @@ void solve()
             if (dis[x] == dis[y] - w) 
             {
                 cnt[y] += cnt[x];
-                // cnt[y] %= MOD;
+                cnt[y] %= MOD;
             }
             ddeg[y]--;
             if (!ddeg[y]) q.push(y);
