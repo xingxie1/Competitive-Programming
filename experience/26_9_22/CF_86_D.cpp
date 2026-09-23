@@ -37,21 +37,55 @@ using vtrl = vector<tuple<ll,ll,ll>>;
 //const int MOD = 998244353;
 //const int MOD = (int)1e9+7;
 
+struct Query
+{
+    int l,r,id;
+};
 void solve()
 {
-    int n;
-    cin >> n;
-    vt a(n);
-    for (int i = 0;i < n;i++) cin >> a[i],a[i] -= i + 1;
-    ranges::sort(a);
-    map<int,int> dp;
-    int ans = 0;
-    for (int x : a) 
+    int n,q;
+    cin >> n >> q;
+    vll a(n + 1);
+    for (int i = 1;i <= n;i++) cin >> a[i];
+    int B = sqrt(n) + 1;
+    vector<Query> qs(q); 
+    for (int i = 0;i < q;i++) 
     {
-        dp[x] = dp[x - 1] + 1;
-        ans = max(ans,dp[x]);
+        cin >> qs[i].l >> qs[i].r;
+        qs[i].id = i;
     }
-    cout << ans << endl;
+    vll ans(q);
+    int L = 1,R = 0;
+    sort(qs.begin(),qs.end(),[&](auto& x,auto& y){
+        int bx = x.l / B;
+        int by = y.l / B;
+        if (bx != by) return bx < by;
+        if (bx & 1) return x.r > y.r;
+        return x.r < y.r;
+    });
+    ll res = 0;
+    vll cnt(1e6 + 1);
+    auto add = [&](int x) 
+    {
+        res -= x * cnt[x] * cnt[x];
+        cnt[x]++;
+        res += x * cnt[x] * cnt[x];
+    };
+    auto del = [&](int x) 
+    {
+        res -= x * cnt[x] * cnt[x];
+        cnt[x]--;
+        res += x * cnt[x] * cnt[x];
+    };
+    for (auto& [l,r,id] : qs)
+    {
+        while (R < r) add(a[++R]);
+        while (R > r) del(a[R--]);
+        while (L < l) del(a[L++]);
+        while (L > l) add(a[--L]);
+        ans[id] = res;
+    }
+    for (ll x :ans) cout << x << endl;
 }
 
 int main()
@@ -61,7 +95,7 @@ int main()
 
     cout << fixed << setprecision(15);
     int _ = 1;
-    cin >> _;
+    // cin >> _;
     while (_ --) solve();
 
     return 0;

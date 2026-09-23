@@ -38,70 +38,77 @@ using vtrl = vector<tuple<ll,ll,ll>>;
 //const int MOD = (int)1e9+7;
 
 int N = 200005; // 最大筛到 N
-vector<int> primes;// 存储质数
-vector<bool> isPrime(N + 1, true); // isPrime[i] = true 表示 i 是质数
-vvt p(N + 1);//i的质因子
-auto init = [] 
+
+vector<int> primes;                  // 存储所有质数
+vector<bool> isPrime(N + 1, true);   // isPrime[i] = true 表示 i 是质数
+vector<int> min_p(N + 1);            // min_p[i] = i 的最小质因子
+
+// 莫比乌斯函数 mu
+// mu[1] = 1
+// mu[n] = 0   ：n 含有平方质因子，例如 4 | n、9 | n
+// mu[n] = (-1)^k：n 是 k 个不同质数的乘积
+vector<int> mu(N + 1);
+
+auto init = []
 {
     isPrime[0] = isPrime[1] = false;
-    for (int i = 2; i <= N; ++i) 
+    mu[1] = 1;
+
+    for (int i = 2; i <= N; ++i)
     {
         if (isPrime[i])
         {
             primes.push_back(i);
-            p[i].push_back(i);
+            min_p[i] = i;
+            mu[i] = -1;
         }
-        for (int p : primes) 
+        for (int p : primes)
         {
-            if (1LL * i * p > N) break; 
-            isPrime[i * p] = false;
-            if (i % p == 0) break;  // 保证每个合数只被最小质因子筛掉一次
-        }
-    }
-    for (int x = 4;x <= N;x++)
-    {
-        for (int pp = 2;pp <= sqrt(x);pp++)
-        {
-            if (x % pp == 0) 
+            if (1LL * i * p > N) break;
+            isPrime[i * p] = false; // 标记为合数
+            min_p[i * p] = p;
+            if (i % p == 0)
             {
-                if (isPrime[pp]) p[x].push_back(pp);
-                if (isPrime[x / pp]) p[x].push_back(x / pp);
+                mu[i * p] = 0;
+                break;
+            }
+            else
+            {
+                mu[i * p] = -mu[i];
             }
         }
-        ranges::sort(p[x]);
-        p[x].erase(unique(p[x].begin(),p[x].end()),p[x].end());
     }
+
     return 0;
 }();
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    vt dp(n + 1,INT_MAX / 2);
-    for (int i = 1;i <= n;i++)
+    ll n;
+    cin >> n;
+    vll a;
+    for (int p : primes)
     {
-        if (i <= k) dp[i] = 0;
-        else 
+        if (1LL * p * p > n) break;
+        a.push_back(1LL * p * p);
+    }
+    ll l = 0,r = (ll)4e10;
+    auto check = [&](ll x)
+    {
+        ll sum = 0;
+        for (ll i = 1;i * i <= x;i++)
         {
-            int x = i;
-            for (int pp : p[x]) 
-            {
-                dp[i] = min(dp[i],pp * dp[x / pp] + 1);
-                // cout << i << " " << pp << endl;
-            }
+            sum += 1LL * mu[i] * (x / (i * i));
         }
-    }
-    // for (int x : dp) cout << x << " ";
-    // cout << endl;
-    ll ans = 0;
-    for (int i = 0;i < n;i++)
+        return sum >= n;
+    };
+    while (l + 1 < r)
     {
-        int x;
-        cin >> x;
-        ans += dp[x];
+        ll m = l + r >> 1;
+        if (check(m)) r = m;
+        else l = m;
     }
-    cout << ans << endl;
+    cout << r << endl;
 }
 
 int main()
