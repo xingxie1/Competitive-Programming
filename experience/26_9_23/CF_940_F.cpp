@@ -101,29 +101,34 @@ void solve()
     });
     int L = 1,R = 0,T = 0;
     vt cnt(m + 1);
-    vt ccnt(n + 1);
+    vt ccnt(n + 2);
     int mex = 1;
     auto add = [&](int x)
     {
-        if (ccnt[cnt[x]] == 1 && mex > cnt[x]) mex = cnt[x];
-        ccnt[cnt[x]]--;
+        if (cnt[x] > 0)
+        {
+            if (ccnt[cnt[x]] == 1 && mex > cnt[x]) mex = cnt[x];
+            ccnt[cnt[x]]--;
+        }
         cnt[x]++;
         ccnt[cnt[x]]++;
         while (ccnt[mex]) mex++;
     };
     auto del = [&](int x)
     {
+
         if (ccnt[cnt[x]] == 1 && mex > cnt[x]) mex = cnt[x];
         ccnt[cnt[x]]--;
         cnt[x]--;
-        ccnt[cnt[x]]++;
+        if (cnt[x] > 0)
+        {
+            ccnt[cnt[x]]++;
+        }
         while (ccnt[mex]) mex++;
     };
     auto update = [&](int id) 
     {
         auto&[pos,val] = cs[id];
-        val = ranges::lower_bound(tmp,val) - tmp.begin() + 1;
-        a[pos] = ranges::lower_bound(tmp,a[pos]) - tmp.begin() + 1;
         if (L <= pos && pos <= R) 
         {
             del(a[pos]);
@@ -148,10 +153,10 @@ void solve()
             T--;
             update(T);
         }
-        while (R < r) add(a[++R]);
-        while (R > r) del(a[R--]);
-        while (L < l) del(a[L++]);
         while (L > l) add(a[--L]);
+        while (R < r) add(a[++R]);
+        while (L < l) del(a[L++]);
+        while (R > r) del(a[R--]);
         ans[id] = mex;
     }
     for (int x : ans) cout << x << endl;
