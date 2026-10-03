@@ -39,16 +39,32 @@ using vtrl = vector<tuple<ll,ll,ll>>;
 
 void solve()
 {
-    auto start = chrono::steady_clock::now();
-
-    int T = 100000000; //1e8
-    for (int i = 0;i < T;i++) {}
-
-    auto end = chrono::steady_clock::now();
-
-    auto time = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-
-    cout << "运行时间: " << time << " ms\n";
+    int total = 100;
+    double sum = 0;
+    for (int iii = 0;iii < total;iii++)
+    {
+        // int n = 100000;
+        // cout << n << endl;
+        // for (int i = 0;i < n;i++) cout << i << " ";
+        // cout << endl;
+        auto st = chrono::steady_clock::now();
+        int T = 100000000;//1e8
+        int x = 0;
+        for (int i = 0;i < T;i++) 
+        {
+            x++;
+        }
+        int n;
+        cin >> n;
+        vt a(n);
+        for (int i = 0;i < n;i++) cin >> a[i];
+        for (int x : a) cout << x << " ";
+        cout << endl;
+        auto ed = chrono::steady_clock::now();
+        sum += chrono::duration<double, milli>(ed - st).count();
+    }
+    double ave = sum / total;
+    cout << ave << endl;
 }
 
 int main()
